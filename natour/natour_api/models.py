@@ -84,3 +84,26 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         ordering = ['-createdAt']
         verbose_name = 'User'
         verbose_name_plural = 'Users'
+
+class Point(models.Model):
+    name = models.CharField(max_length=100, null=False, blank=False)
+    description = models.TextField(null=False, blank=False)
+    url = models.URLField(null=False, blank=False)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=False, blank=False)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=False, blank=False)
+    photo = models.ImageField(upload_to='Images/', blank=True, null=True, default='Images/doc.jpg')
+    user = models.ForeignKey(
+        'CustomUser',  # Referencing the CustomUser model
+        on_delete=models.CASCADE,  # Ensures that when a user is deleted, their points are also deleted
+        related_name='points'  # Allows reverse access to a user's points using `user.points`
+    )
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['-createdAt']
+        verbose_name = 'Point'
+        verbose_name_plural = 'Points'

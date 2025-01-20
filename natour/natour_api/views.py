@@ -2,8 +2,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from .models import CustomUser
-from .serializer import CustomUserSerializer
+from .models import CustomUser, Point
+from .serializer import CustomUserSerializer, PointSerializer
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -79,3 +79,21 @@ def login(request):
         }, status=status.HTTP_200_OK)
 
     return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
+
+"""
+POINTS
+"""
+@api_view(['POST'])
+def create_point(request):
+    serializer = PointSerializer(data=request.data)
+    if serializer.is_valid():
+        point = serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def get_points(request):
+    points = Point.objects.all()
+    serializer = PointSerializer(points, many=True)
+    return Response(serializer.data)
