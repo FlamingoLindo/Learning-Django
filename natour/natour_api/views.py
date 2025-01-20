@@ -24,21 +24,44 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
-@api_view(['GET'])
-def get_users(request):
-    users = CustomUser.objects.all()
-    serializer = CustomUserSerializer(users, many=True)
-    return Response(serializer.data)
-
 @api_view(['POST'])
 def create_user(request):
     serializer = CustomUserSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
-        token = Token.objects.create(user=user)
-        return Response({"token": token.key, "user": serializer.data}, status=status.HTTP_201_CREATED)
-    
+        refresh = RefreshToken.for_user(user)
+        serializer = CustomUserSerializer(user)
+        return Response({
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+            "user": serializer.data
+        }, status=status.HTTP_200_OK)
+
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def login(request):
+    try:
+        user = CustomUser.objects.get(email=request.data['email'])
+    except CustomUser.DoesNotExist:
+        return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    if user.check_password(request.data['password']):
+        refresh = RefreshToken.for_user(user)
+        serializer = CustomUserSerializer(user)
+        return Response({
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+            "user": serializer.data
+        }, status=status.HTTP_200_OK)
+
+    return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
+
+@api_view(['GET'])
+def get_users(request):
+    users = CustomUser.objects.all()
+    serializer = CustomUserSerializer(users, many=True)
+    return Response(serializer.data)
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def user_detail(request, pk):
@@ -61,24 +84,6 @@ def user_detail(request, pk):
     elif request.method == 'DELETE':
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
-@api_view(['POST'])
-def login(request):
-    try:
-        user = CustomUser.objects.get(email=request.data['email'])
-    except CustomUser.DoesNotExist:
-        return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
-
-    if user.check_password(request.data['password']):
-        refresh = RefreshToken.for_user(user)
-        serializer = CustomUserSerializer(user)
-        return Response({
-            "refresh": str(refresh),
-            "access": str(refresh.access_token),
-            "user": serializer.data
-        }, status=status.HTTP_200_OK)
-
-    return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
 
 """
 POINTS
