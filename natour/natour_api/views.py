@@ -1,5 +1,8 @@
 from django.utils import timezone
 from django.db.models import Avg
+from django.core.mail import send_mail
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -39,6 +42,15 @@ def create_user(request):
         user = serializer.save()
         refresh = RefreshToken.for_user(user)
         serializer = CustomUserSerializer(user)
+
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        send_mail(
+            'Cadastro App Natour',
+            'Olá, ' + user.name + '!\n\n' + 'Seja bem-vindo ao App Natour! Aproveite para conhecer os pontos turísticos da sua cidade e compartilhar suas experiências com outros usuários.\n\n' + 'Atenciosamente,\n' + 'Equipe Natour',
+            'natourproject@gmail.com',
+            [user.email]
+                  )
+
         return Response({
             "refresh": str(refresh),
             "access": str(refresh.access_token),
