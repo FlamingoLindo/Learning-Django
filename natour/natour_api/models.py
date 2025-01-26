@@ -48,7 +48,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         ]
     )
     password = models.CharField(
-        max_length=128,  # Default max length for Django hashed passwords
+        max_length=128,
         null=False,
         blank=False
     )
@@ -72,11 +72,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def get_natural_key(self):
         return self.email
 
-    def save(self, *args, **kwargs):
-        if not self.pk:  # New user creation
-            self.password = make_password(self.password)
-        super(CustomUser, self).save(*args, **kwargs)
-
     def __str__(self):
         return self.name
 
@@ -91,11 +86,13 @@ class Point(models.Model):
     url = models.URLField(null=False, blank=False)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, null=False, blank=False)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, null=False, blank=False)
+    view = models.IntegerField(default=0)
+    score = models.IntegerField(default=0)
     photo = models.ImageField(upload_to='Images/', blank=True, null=True, default='Images/doc.jpg')
     user = models.ForeignKey(
-        'CustomUser',  # Referencing the CustomUser model
-        on_delete=models.CASCADE,  # Ensures that when a user is deleted, their points are also deleted
-        related_name='points'  # Allows reverse access to a user's points using `user.points`
+        'CustomUser',
+        on_delete=models.CASCADE,
+        related_name='points'
     )
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
@@ -107,3 +104,27 @@ class Point(models.Model):
         ordering = ['-createdAt']
         verbose_name = 'Point'
         verbose_name_plural = 'Points'
+
+class Review(models.Model):
+    point = models.ForeignKey(
+        'Point',
+        on_delete=models.CASCADE,
+        related_name='comments'
+    )
+    user = models.ForeignKey(
+        'CustomUser',
+        on_delete=models.CASCADE,
+        related_name='comments'
+    )
+    comment = models.TextField(null=False, blank=True)
+    star = models.IntegerField(null=False, blank=False)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Comment by {self.user} on {self.point.name}"
+
+    class Meta:
+        ordering = ['-createdAt']
+        verbose_name = 'Comment'
+        verbose_name_plural = 'Comments'
