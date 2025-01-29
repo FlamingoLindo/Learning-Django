@@ -1,0 +1,27 @@
+# Core dependencies
+Django>=3.2,<5.0  # Ensure compatibility with your project
+djangorestframework>=3.14.0  # Django REST Framework
+
+# JWT authentication
+djangorestframework-simplejwt>=5.2.2  # JWT authentication for DRF
+
+# Environment variable management
+python-decouple>=3.6  # To use the `config` function
+
+# Database and ORM
+psycopg2>=2.9.3  # If using PostgreSQL (remove if using SQLite)
+mysqlclient>=2.1.1  # If using MySQL (remove if using SQLite)
+
+# Email utilities
+django-celery-email>=3.0.0  # Optional: For async email sending
+
+# Validation and security
+validators>=0.20.0  # If you use regex-based validation
+
+# Testing and development
+pytest-django>=4.5.2  # For Django tests
+pytest>=7.1.2
+coverage>=6.5.0  # For test coverage reports
+
+# Other utilities
+pathlib>=1.0.1  # Path handling
