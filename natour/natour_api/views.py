@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 from django.utils import timezone
 from django.db.models import Avg
 from django.core.mail import send_mail
@@ -95,6 +98,7 @@ def user_detail(request, pk):
     try:
         user = CustomUser.objects.get(pk=pk)
     except CustomUser.DoesNotExist:
+        logger.error(f"User with ID {pk} not found.")
         return Response(status=status.HTTP_404_NOT_FOUND)
     
     if request.method == 'GET':

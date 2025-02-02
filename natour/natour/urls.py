@@ -17,7 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from django.urls import re_path
+from django_prometheus import exports
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('natour_api/', include('natour_api.urls')),
+    re_path(r"^metrics$", exports.ExportToDjangoView, name="metrics"),
 ]
