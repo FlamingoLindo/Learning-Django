@@ -9,7 +9,8 @@ djangorestframework-simplejwt>=5.2.2  # JWT authentication for DRF
 python-decouple>=3.6  # To use the `config` function
 
 # Database and ORM
-psycopg2>=2.9.3  # If using PostgreSQL (remove if using SQLite)
+psycopg2-binary>=2.9.3
+
 mysqlclient>=2.1.1  # If using MySQL (remove if using SQLite)
 
 # Email utilities
