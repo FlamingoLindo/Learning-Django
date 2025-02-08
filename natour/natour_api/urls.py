@@ -1,11 +1,11 @@
 from django.urls import path
-from .views import (MyTokenObtainPairView, get_users, create_user, user_detail, login, 
-                    create_point, get_points, point_detail, review_point, review_detail, get_all_reviews,
-                    point_reviews)
+from rest_framework_simplejwt.views import TokenRefreshView
 
-from rest_framework_simplejwt.views import (
-    TokenRefreshView,
-)
+# Import views from their respective modules
+from .views.auth import MyTokenObtainPairView, create_user, login
+from .views.users import get_users, user_detail
+from .views.points import create_point, get_points, point_detail
+from .views.reviews import review_point, review_detail, get_all_reviews,  point_reviews
 
 urlpatterns = [
     path('token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
