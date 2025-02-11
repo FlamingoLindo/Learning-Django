@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, Point, Review
+from .models import CustomUser, Point, Review, Term
 
 """POINT SERIALIZER"""
 class PointSerializer(serializers.ModelSerializer):
@@ -33,4 +33,10 @@ class CustomUserSerializer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
+        fields = '__all__'
+
+"""TERM SERIALIZER"""
+class TermSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Term
         fields = '__all__'

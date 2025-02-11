@@ -26,22 +26,22 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(
         max_length=100,
         null=False,
-        blank=False,
+        blank=True,
         validators=[MinLengthValidator(3)]
     )
-    email = models.EmailField(unique=True, null=False, blank=False)
+    email = models.EmailField(unique=True, null=False, blank=True)
     cpf = models.CharField(
         max_length=11,
         null=False,
-        blank=False,
+        blank=True,
         unique=True,
         validators=[MinLengthValidator(11)]
     )
-    date_of_birth = models.DateField(null=False, blank=False)
+    date_of_birth = models.DateField(null=False, blank=True)
     phone_number = models.CharField(
         max_length=15,
         null=False,
-        blank=False,
+        blank=True,
         validators=[
             MinLengthValidator(10),
             RegexValidator(regex=r'^\+55\d{2}(?:9\d{8}|\d{8})$', message="O número de telefone deve estar no formato '+55DDXXXXXXXXX' ou '+55DDXXXXXXXX'.")
@@ -50,7 +50,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(
         max_length=128,
         null=False,
-        blank=False
+        blank=True
     )
     photo = models.ImageField(upload_to='Images/', blank=True, null=True, default='Images/doc.jpg')
     ROLE_CHOICES = [
@@ -128,3 +128,11 @@ class Review(models.Model):
         ordering = ['-createdAt']
         verbose_name = 'Comment'
         verbose_name_plural = 'Comments'
+
+class Term(models.Model):
+    use_terms = models.TextField(null=False, blank=False)
+    politics = models.TextField(null=False, blank=False)
+
+    class Meta:
+        verbose_name = 'Term'
+        verbose_name_plural = 'Terms'
