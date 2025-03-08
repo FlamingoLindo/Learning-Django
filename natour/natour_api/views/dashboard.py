@@ -17,3 +17,7 @@ def user_count(request):
     user_count = CustomUser.objects.count()
     return Response({"total_users": user_count})
 
+# qnt de ativos/intaivos
+# por mês
+# qnt de pontos
+# ranking de pontso por reviews

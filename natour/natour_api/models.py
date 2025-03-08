@@ -1,4 +1,9 @@
+import datetime
+import secrets
+import string
+
 from django.db import models
+from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.hashers import make_password
 from django.core.validators import MinLengthValidator, RegexValidator
@@ -37,7 +42,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         unique=True,
         validators=[MinLengthValidator(11)]
     )
-    date_of_birth = models.DateField(null=False, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
     phone_number = models.CharField(
         max_length=15,
         null=False,
@@ -52,15 +57,18 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         null=False,
         blank=True
     )
+
+    is_verified = models.BooleanField(default=False)
+    verification_code = models.CharField(max_length=6, blank=True, null=True)
+    verification_expires = models.DateTimeField(blank=True, null=True)
+
     photo = models.ImageField(upload_to='Images/', blank=True, null=True, default='Images/doc.jpg')
     ROLE_CHOICES = [
         ('master', 'Master'),
         ('user', 'User'),
     ]
     role = models.CharField(max_length=100, choices=ROLE_CHOICES, default='user')
-    is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    is_superuser = models.BooleanField(default=False)
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
 
@@ -74,6 +82,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.name
+    
+    def set_verification_code(self):
+        self.verification_code = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(6)).upper()
+        self.verification_expires = timezone.now() + datetime.timedelta(minutes=10)
+        self.save(update_fields=['verification_code', 'verification_expires'])
 
     class Meta:
         ordering = ['-createdAt']

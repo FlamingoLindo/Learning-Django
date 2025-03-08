@@ -9,6 +9,7 @@ from ..serializer import ReviewSerializer
 
 #verificar média ao deletar tbm
 
+# Rota para criação de 'review' com comentário e avaliação em forma de estrelas
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def review_point(request):
@@ -23,12 +24,15 @@ def review_point(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# Retorna todos as avaliações
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_all_reviews(request):
     reviews = Review.objects.all()
     return Response(ReviewSerializer(reviews, many=True).data)
 
+# Rertorna avaliação especifica
+# Não é melhor fazer uma q retorna as avalizações do usuário?????
 @api_view(['GET'])
 def point_reviews(request, pk):
     reviews = Review.objects.filter(point=pk)

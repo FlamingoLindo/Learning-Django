@@ -11,6 +11,7 @@ from ..pagination import CustomPagination
 
 logger = logging.getLogger(__name__)
 
+# Rota para listagem de todos os usuários cadastrados
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_users(request):
@@ -25,6 +26,7 @@ def get_users(request):
 
     return paginator.get_paginated_response(serializer.data)
 
+# Rota para listage de um único usuário, edição de usuário e remoção de usuário
 @api_view(['GET', 'PUT', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def user_detail(request, pk):
