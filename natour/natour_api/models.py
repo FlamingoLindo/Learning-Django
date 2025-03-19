@@ -59,6 +59,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     )
 
     is_verified = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
     verification_code = models.CharField(max_length=6, blank=True, null=True)
     verification_expires = models.DateTimeField(blank=True, null=True)
 
@@ -100,6 +101,7 @@ class Point(models.Model):
     latitude = models.DecimalField(max_digits=9, decimal_places=6, null=False, blank=False)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, null=False, blank=False)
     view = models.IntegerField(default=0)
+    active = models.BooleanField(default=True)
     score = models.IntegerField(default=0)
     photo = models.ImageField(upload_to='Images/', blank=True, null=True, default='Images/doc.jpg')
     user = models.ForeignKey(

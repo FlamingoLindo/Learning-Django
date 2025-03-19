@@ -7,7 +7,7 @@ from .views.auth import MyTokenObtainPairView, create_user, login, send_code
 
 # Importa as views para gerenciar os usuários, pontos, avaliações, dashboard e termos
 from .views.users import get_users, user_detail
-from .views.points import create_point, get_points, point_detail
+from .views.points import create_point, get_points, change_point_status, point_detail
 from .views.reviews import review_point, review_detail, get_all_reviews,  point_reviews
 from .views.dashboard import user_count
 from .views.terms import get_term, add_terms, update_terms
@@ -30,6 +30,7 @@ urlpatterns = [
     path('points/create/', create_point, name='create_point'),
     path('points/<int:pk>/', point_detail, name='point_detail'),
     path('points/<int:pk>/reviews/', point_reviews, name='point_reviews'),
+    path('points/<int:pk>/change_status/', change_point_status, name='change_point_status'),
 
     # Rotas de gerenciamento de avaliações
     path('reviews/create/', review_point, name='review_point'),
